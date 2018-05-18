@@ -6,7 +6,8 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-
+import requests
+import scrapy
 
 class FakeSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -69,6 +70,11 @@ class FakeDownloaderMiddleware(object):
         return s
 
     def process_request(self, request, spider):
+        print()
+        print(request.url)
+        #if 'hlavnespravy.sk' not in request.url or 'robots.txt' in request.url:
+        #    return None
+        print(request.url)
         # Called for each request that goes through the downloader
         # middleware.
 
@@ -78,7 +84,13 @@ class FakeDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+
+        r = requests.get(request.url)
+        res = scrapy.http.Response(request.url, r.status_code, str.encode(r.text))
+        print(r)
+        print()
+
+        return res
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
